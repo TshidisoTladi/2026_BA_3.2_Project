@@ -1,0 +1,67 @@
+Neo Mojalefa - Notes
+Part of project: Training the model (Step 4)
+
+=====================================================
+WHAT I'M RESPONSIBLE FOR
+=====================================================
+- Training the regression model (predicts traffic volume / Total)
+- Training the classification model (predicts traffic situation: low/normal/high/heavy)
+- Hyperparameter tuning of both models
+- In-depth evaluation of both models on the unseen test days
+- Saving the trained models (models/regression_model.joblib, models/classification_model.joblib)
+
+=====================================================
+FILES I OWN
+=====================================================
+- src/train_regression.py
+- src/train_classification.py
+- src/tune_models.py
+- src/evaluate_models.py
+- src/test_models.py
+
+=====================================================
+HOW TO RUN MY PART
+=====================================================
+1. From the project folder, activate the virtual environment:
+   .venv\Scripts\Activate.ps1   (Mac/Linux: source .venv/bin/activate)
+2. Make sure data/Dataset.csv is present.
+3. Run in this order:
+   python src/train_regression.py
+   python src/train_classification.py
+   python src/tune_models.py
+   python src/evaluate_models.py
+   python src/test_models.py
+
+=====================================================
+RESULTS SO FAR
+=====================================================
+Regression (Random Forest selected):
+  Baseline (previous interval)   MAE 24.48
+  Linear Regression               MAE 21.67
+  Random Forest (tuned)           MAE 17.80, R2 0.843   <- best, saved
+  Gradient Boosting               MAE 18.60
+  Neural Network (MLP)            MAE 19.60
+
+Classification (Decision Tree selected):
+  Baseline (most common class)    accuracy 0.542
+  Logistic Regression              accuracy 0.817
+  Decision Tree (tuned)            accuracy 0.998, macro-F1 0.996   <- best, saved
+  Random Forest                    accuracy 0.994
+
+Note: the classification label is derived from the live vehicle counts, so the
+high score is expected. Without the live counts (forecast mode), accuracy drops
+to about 72% - this shows the difference between labelling the current state
+and predicting the future state.
+
+=====================================================
+STILL TO DO / OPEN QUESTIONS
+=====================================================
+-
+-
+-
+
+=====================================================
+QUESTIONS FOR THE GROUP
+=====================================================
+-
+-
