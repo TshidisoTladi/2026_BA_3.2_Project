@@ -1,1 +1,5 @@
 Notes
+
+To increase efficiency and easy accessibility we added the speech recognition.
+Report - On how we designed the AI Model
+AI Solution - Theoretical aspect: Data
