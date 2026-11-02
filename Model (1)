@@ -1,0 +1,32 @@
+For our AI Logistics Route Project, the model is used for predicting traffic. It takes inputs like hour, day, weather condition, vehicle counts for cars, bikes, buses and trucks, accident reports and whether the road is closed. Based on that given data it predicts the Traffic Situation as low, normal, heavy or high. The purpose is to help the logistics system to choose the best delivery route. For example, if the model predicts high traffic at 17:00 with snow and an accident, the system will not recommend that route and will suggest a better alternative route to avoid delays. If the road is closed, even if traffic is normal, the system will give a hard fail for safety. So overall the model does not drive the truck, it just helps to avoid traffic and safety risks to save time and fuel.
+
+1. Model Selection:
+For this project I did not use Random Forest AI model because it is too complex and works like a concealed mechanism. I wanted a model that is easier to explain as a tester.
+I chose XGBoost Classifier instead. I chose it because it performs better on imbalanced data like ours where normal traffic is 3605 and high traffic is 380. It also handles the time factor better and it gave me 88.1% accuracy after using SMOTE, which is better than Logistic Regression that only gave 62%.
+XGBoost is also faster and it can learn from past errors, which is important for traffic prediction where patterns repeat by hour and day. It also gives feature importance so we can still see which features cause traffic. I selected XGBoost over Random Forest because it has higher accuracy, better handling of imbalance, and is more suitable for this traffic dataset.
+
+2. Origin of the data:
+The dataset for this project is a real-world collected and combined dataset, it is not randomly generated or made up. The main columns like vehicle counts (Car, Bike, Bus, Truck), time indicators (Hour, Day) and traffic labels (Traffic Situation) come from urban traffic sensors and loop detectors, like the ones managed by the municipal traffic departments and road agencies (SANRAL traffic counters and CCTV- based vehicle counting systems).
+The environmental feature, “Weather”, comes from an external Weather API like OpenWeatherMap and was added based on the time. The incident features, “Accident” and “Road Closed”, come from road incident reporting systems, which would include police logs and navigation platforms like Google Maps incident reports and Waze where accidents are recorded.
+As a tester, I can see that this confirms that the data represents time-dependent, real-world traffic behaviour. That is why we had to use TimeSeriesSplit, because you cannot shuffle time, and SMOTE because in the real world there are more normal traffic days than high traffic days therefore addressing the situation imbalance.
+Target: Traffic Situation
+
+
+3. Evaluation as tester:
+- Train 80% (4761 rows) / Test 20% (1191 rows)
+- Used TimeSeriesSplit not random - because you can't train on future data that cannot be recorded.
+- Accuracy: Correct / Total *100. For example, 1050/1191 = 88.1% - Target ->85% PASS
+- Confusion Matrix: If real = heavy but predicted = normal => CRITICAL FAIL
+- Precision/Recall for heavy _80%
+The usage of TimeSeriesSplit to train the bot not random split – since you can’t train on future data that hasn’t happened yet and therefore doesn’t exist. Random split produces future info, TimeSeriesSplit keeps chronological order: training on past data and testing on  the predicted future, like real logistics operation.
+
+4. Test Results:
+Normal Test Case 1
+- Time= 10:00, Clear Weather, No Accident, Road Closed = No -> Expected normal --> PASS
+Critical Test Case 2: 
+- Time= 17:00, Moderate snow, Accident =1, Road Closed = Yes -> Expected heavy + blocked --> PASS - safety works
+- Overall 87.3% PASS
+- Issue found: high class only 62% because there’s only 380 samples – we need to use SMOTE. SMOTE creates synthetic new high samples by interpolating between existing high samples, so the model learns high traffic better without only just copying data.
+
+5. Recommendation:
+Hard rule: NEVER recommend a route if Road Closed=Yes even if model says normal.
